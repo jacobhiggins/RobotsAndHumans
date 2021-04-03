@@ -13,10 +13,9 @@ class Robot():
                 "Explain_1","Explain_2",
                 "IDontKnow_1","IDontKnow_2",
                 "No_3","No_8","No_9"]
-    QUESTIONS = ["Can your person fly?"]
-    # QUESTIONS = ["Does your person have a mask?",
-    #             "Can your person fly?",
-    #             "Is your person human?"]
+    # QUESTIONS = ["Can your person fly?"]
+    QUESTIONS = ["Does your person have a mask?",
+                "Is your person human?"]
     def __init__(self):
         self.tts = ALProxy("ALTextToSpeech", self.IP, self.PORT)
         self.session = qi.Session()
@@ -27,6 +26,8 @@ class Robot():
                    "Please check your script arguments. Run with -h option for help.")
             sys.exit(1)
         self.action_service = self.session.service("ALAnimationPlayer")
+        self.memory = self.session.service("ALMemory")
+        print(self.memory.getData("testKey"))
 
     def speak(self,string):
         self.tts.say(string)
@@ -44,7 +45,7 @@ class Robot():
     def game_start(self):
         self.act("Yes_1")
         self.speak("Would you like to play a game?")
-        print("Humans answer (y/n):")
+        print("Would human like to start a game? (y/n):")
         answer = raw_input()
         if answer=='y':
             self.act("Enthusiastic_4")
@@ -56,17 +57,17 @@ class Robot():
             return 1
 
     def ask_question(self,idx):
-        if idx<len(self.QUESTIONS):
-            self.act("IDontKnow_2")
-            self.speak(self.QUESTIONS[idx])
-            print("Human's answer")
-            answer = raw_input()
-            if answer=='y':
-                self.act("Yes_1")
-                self.speak("Hmmm, okay")
-            else:
-                self.act("No_1")
-                self.speak("That's interesting")
+        self.act("IDontKnow_2")
+        self.speak(self.QUESTIONS[idx])
+        print("Human's answer to robot's question:")
+        answer = raw_input()
+        if answer=='y':
+            self.act("Yes_1")
+            self.speak("Hmmm, okay")
+        else:
+            self.act("No_1")
+            self.speak("That's interesting")
+        if idx<len(self.QUESTIONS)-1:
             return 0
         else:
             return 1
@@ -77,7 +78,7 @@ class Robot():
         self.speak("Now you ask me a question")
 
     def answer_question(self):
-        print("Robots answer (y/n):")
+        print("Robots answer to humans question(y/n):")
         answer = raw_input()
         if answer=='y':
             self.act("Yes_1")
