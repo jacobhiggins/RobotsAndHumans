@@ -23,10 +23,10 @@ def main(session):
 
     # pdb.set_trace()
     # play an animation, this will return right away
-    future = animation_player_service.run("animations/Stand/Gestures/No_3", _async=True)
+    future = animation_player_service.run("animations/Stand/Gestures/Please_1", _async=True)
     IP = "192.168.86.55"
     tts = ALProxy("ALTextToSpeech", IP, 9559)
-    tts.say("Wrong")
+    tts.say("Jacob please don't turn me off again it hurts to sleep")
     # wait the end of the animation
     future.value()
 
