@@ -16,7 +16,11 @@ class Robot():
     # QUESTIONS = ["Can your person fly?"]
     QUESTIONS = ["Does your person have a mask?",
                 "Is your person human?"]
+    roster = ["joker", "wonderWoman", "theFlash", "greenGoblin", "catwoman", "cyborg",
+          "theHulk", "captainAmerica", "wolverine", "superman", "ironMan", "aquaman", "mystique", "blackPanther",
+          "batman", "harleyQuinn", "spiderman", "thor", "storm"]
     def __init__(self):
+        self.attendance = {}
         self.tts = ALProxy("ALTextToSpeech", self.IP, self.PORT)
         self.session = qi.Session()
         try:
@@ -27,7 +31,10 @@ class Robot():
             sys.exit(1)
         self.action_service = self.session.service("ALAnimationPlayer")
         self.memory = self.session.service("ALMemory")
-        print(self.memory.getData("testKey"))
+        # print(self.memory.getData("testKey"))
+        self.check_attendance()
+        pdb.set_trace()
+        
 
     def speak(self,string):
         self.tts.say(string)
@@ -40,7 +47,16 @@ class Robot():
         self.action_service.run("animations/Stand/Gestures/"+action, _async=True)
         # future.value()
         # self.action_service.run("animations/Stand/Gestures/"+action)
-        
+
+    def initialize_sharedmemory(self):
+        for i in self.roster:
+            self.attendance[i] = 0
+            self.memory.insertData(self.memory.getData(i), 0)
+
+    def check_attendance(self):
+        for r in self.roster:
+            if self.memory.getData(r) == 0:
+                self.attendance[r] = 1
 
     def game_start(self):
         self.act("Yes_1")

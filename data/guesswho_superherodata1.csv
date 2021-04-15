@@ -1,0 +1,21 @@
+Name,isMasked,hasHelmet,hasVisibleHair,isMale,isMarvel,isDC,hasFacialHair,isHero,isVillain,canFly,isAvenger,justiceLeagueMember,inX-Men
+Hulk,0,0,1,1,1,0,0,1,0,0,1,0,0
+Harley Quinn,0,0,1,0,0,1,0,0,1,0,0,0,0
+Batman,1,0,0,1,0,1,0,1,0,0,0,1,0
+Catwoman,1,0,1,0,0,1,0,0,1,0,0,0,0
+Storm,0,0,1,0,1,0,0,1,0,1,0,0,1
+Black Widow,0,0,1,0,1,0,0,1,0,0,1,0,0
+Iron Man,0,1,0,1,1,0,1,1,0,1,1,0,0
+Superman,0,0,1,1,0,1,0,1,0,1,0,1,0
+Green Goblin,0,0,0,1,1,0,0,0,1,0,0,0,0
+Aquaman,0,0,1,1,0,1,0,1,0,0,0,1,0
+Mystique,0,0,1,0,1,0,0,0,1,0,0,0,0
+Wolverine,0,0,1,1,1,0,1,1,0,0,0,0,1
+Thor,0,0,1,1,1,0,1,1,0,1,1,0,0
+Black Panther,1,0,0,1,1,0,0,1,0,0,1,0,0
+Captain America,1,0,0,1,1,0,0,1,0,0,1,0,0
+Spiderman,1,0,0,1,1,0,0,1,0,0,1,0,0
+Cyborg,0,0,0,1,0,1,0,1,0,0,0,0,0
+Joker,0,0,1,1,0,1,0,0,1,0,0,0,0
+Wonder Woman,0,0,1,0,0,1,0,1,0,0,0,1,0
+The Flash,1,0,0,1,0,1,0,1,0,0,0,1,0
