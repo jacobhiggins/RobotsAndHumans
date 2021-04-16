@@ -21,6 +21,8 @@ class Robot:
 
     def __init__(self):
         self.attendance = {}
+        for i in self.roster:
+            self.attendance[i] = 0
         self.tts = ALProxy("ALTextToSpeech", self.IP, self.PORT)
         self.session = qi.Session()
         try:
@@ -105,10 +107,16 @@ class Robot:
             return 0
 
     def game(self):
-        if len(self.attendance) > 0:
+        valid_set = 0
+        for hero in self.attendance:
+            if self.attendance[hero] == 1:
+                valid_set = 1
+
+        if valid_set:
             self.speak("The following characters have been seen:")
             for hero in self.attendance:
-                self.speak(hero)
+                if self.attendance[hero] == 1:
+                    self.speak(hero)
         else:
             journey.speak("Nobody Loves Me, Frowny Face Emoji")
 
