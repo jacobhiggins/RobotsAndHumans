@@ -117,7 +117,7 @@ class Robot:
         self.memory = self.session.service("ALMemory")
         self.initialize_shared_memory()
         # self.check_attendance()
-        pdb.set_trace()
+        # pdb.set_trace()
 
     def speak(self, string):
         self.tts.say(string)
@@ -216,6 +216,7 @@ class Robot:
         else:
             self.speak("No Characters Have Been Selected.")
             self.speak("Please show me at least one character before patting my head again.")
+            # self.speak("Fuck this bullshit!")
             self.head_pat = 0
             self.memory.insertData("headPat", 0)
             self.observe_faces()
