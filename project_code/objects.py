@@ -25,9 +25,6 @@ class Robot:
         for i in self.roster:
             self.attendance[i] = 0
 
-        # DEBUGGING
-        print(self.attendance)
-
         self.tts = ALProxy("ALTextToSpeech", self.IP, self.PORT)
         self.session = qi.Session()
         try:
@@ -74,7 +71,8 @@ class Robot:
         if answer == 'y':
             self.act("Enthusiastic_4")
             self.speak("Yay!")
-            self.speak("Please show me a set of characters that you would like to play with")
+            self.speak("Please show me a set of characters that you would like to play with.")
+            self.speak("Pat my head when you've finished")
             return 0
         else:
             self.speak("Okay, maybe next time!")
@@ -126,18 +124,19 @@ class Robot:
             for hero in self.attendance:
                 if self.attendance[hero] == 1:
                     self.speak(hero)
-                    # DEBUGGING
-                    print(self.attendance[hero])
+
         else:
-            journey.speak("No Characters Have Been Selected.")
+            self.speak("No Characters Have Been Selected.")
+            self.speak("Please show me at least one character before patting my head again.")
+            self.observe_faces()
+
+    def observe_faces(self):
+        while self.head_pat != 1:
+            self.head_pat = self.memory.getData("headPat")
 
     def game(self):
         val = self.game_start()
-        while self.head_pat != 1:
-            self.head_pat = self.memory.getData("headPat")
-            # TODO add handling for if someone pats the head too early
-            # We'll see how this goes
-
+        self.observe_faces()
         self.roll_call()
         question_idx = 0
         while val == 0:
