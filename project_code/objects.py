@@ -23,6 +23,9 @@ class Robot:
         self.attendance = {}
         for i in self.roster:
             self.attendance[i] = 0
+            # DEBUGGING
+            print(self.attendance)
+
         self.tts = ALProxy("ALTextToSpeech", self.IP, self.PORT)
         self.session = qi.Session()
         try:
@@ -116,6 +119,8 @@ class Robot:
             self.speak("The following characters have been seen:")
             for hero in self.attendance:
                 if self.attendance[hero] == 1:
+                    # DEBUGGING
+                    print(self.attendance[hero])
                     self.speak(hero)
         else:
             journey.speak("Nobody Loves Me, Frowny Face Emoji")
