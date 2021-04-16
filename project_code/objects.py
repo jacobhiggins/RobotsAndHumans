@@ -23,8 +23,9 @@ class Robot:
         self.attendance = {}
         for i in self.roster:
             self.attendance[i] = 0
-            # DEBUGGING
-            print(self.attendance)
+
+        # DEBUGGING
+        print(self.attendance)
 
         self.tts = ALProxy("ALTextToSpeech", self.IP, self.PORT)
         self.session = qi.Session()
@@ -59,8 +60,10 @@ class Robot:
 
     def check_attendance(self):
         for r in self.roster:
-            if self.memory.getData(r) == 0:
+            if self.memory.getData(r) == 1:
                 self.attendance[r] = 1
+            else:
+                self.attendance[r] = 0
 
     def game_start(self):
         self.act("Yes_1")
