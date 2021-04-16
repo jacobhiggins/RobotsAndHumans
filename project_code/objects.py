@@ -115,10 +115,12 @@ class Robot:
             return 0
 
     def roll_call(self):
+        self.check_attendance()
         valid_set = 0
         for hero in self.attendance:
             if self.attendance[hero] == 1:
                 valid_set = 1
+
         if valid_set:
             self.speak("The following characters have been selected:")
             for hero in self.attendance:
@@ -132,7 +134,7 @@ class Robot:
     def game(self):
         val = self.game_start()
         while self.head_pat != 1:
-            self.speak("hmm")
+            self.speak("oh god help me I'm on fire")
             self.head_pat = self.memory.getData("headPat")
             # TODO add handling for if someone pats the head too early
             # We'll see how this goes
