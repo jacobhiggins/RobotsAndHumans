@@ -53,13 +53,14 @@ class Robot:
     def get_selected_characters(self):
         return self.selected_characters
 
-    # sets all values in the shared memory to zero, and sets all stored attendance values to zero.
+    # Sets all values in the shared memory to zero, and sets all stored attendance values to zero.
     # Also resets selected characters
     def initialize_shared_memory(self):
         for i in self.roster:
             self.attendance[i] = 0
             self.memory.insertData(i, 0)
         self.selected_characters = []
+        self.head_pat = 0
 
     def check_attendance(self):
         for r in self.roster:
@@ -141,11 +142,11 @@ class Robot:
     def observe_faces(self):
         while self.head_pat != 1:
             self.head_pat = self.memory.getData("headPat")
+        self.roll_call()
 
     def game(self):
         val = self.game_start()
         self.observe_faces()
-        self.roll_call()
         question_idx = 0
         while val == 0:
             val = self.ask_question(question_idx)
