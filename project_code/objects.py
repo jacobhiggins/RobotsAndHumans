@@ -140,6 +140,8 @@ class Robot:
             self.observe_faces()
 
     def observe_faces(self):
+        self.head_pat = 0
+        self.memory.insertData("headPat", 0)
         while self.head_pat != 1:
             self.head_pat = self.memory.getData("headPat")
         self.roll_call()
