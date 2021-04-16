@@ -8,6 +8,13 @@ class QuestionAnalyzer():
         self.current_data = pd.read_csv(filename, header=0)
         self.questions_idxs = np.arange(0,len(self.current_data.columns)-1) # list of questions not asked yet
 
+    def faces_in_play(self,list):
+        '''
+        Gets list of strings of faces that are in play
+        Changes self.current_data to have only these faces
+        '''
+        self.current_data = self.current_data[self.current_data['Name'].isin(faces)]
+
     def get_information_gain(self):
         '''
         Get information gain for each available question
@@ -68,7 +75,7 @@ if __name__=='__main__':
     filename = "../data/guesswho_superherodata1.csv"
     qa = QuestionAnalyzer(filename)
     faces = ['batman','superman','spiderman','ironman','wonderWoman']
-    qa.current_data = qa.current_data[qa.current_data['Name'].isin(faces)]
+    qa.faces_in_play(faces)
     pdb.set_trace()
     # ig = qa.get_information_gain()
     while True:
