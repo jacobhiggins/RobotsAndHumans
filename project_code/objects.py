@@ -134,7 +134,6 @@ class Robot:
     def game(self):
         val = self.game_start()
         while self.head_pat != 1:
-            self.speak("oh god help me I'm on fire")
             self.head_pat = self.memory.getData("headPat")
             # TODO add handling for if someone pats the head too early
             # We'll see how this goes
