@@ -6,6 +6,74 @@ import pdb
 import time
 
 
+class QuestionAnalyzer():
+    def __init__(self,filename):
+        self.orig_data = pd.read_csv(filename, header=0)
+        self.current_data = pd.read_csv(filename, header=0)
+        self.questions_idxs = np.arange(0,len(self.current_data.columns)-1) # list of questions not asked yet
+
+    def faces_in_play(self,list):
+        '''
+        Gets list of strings of faces that are in play
+        Changes self.current_data to have only these faces
+        '''
+        self.current_data = self.current_data[self.current_data['Name'].isin(faces)]
+
+    def get_information_gain(self):
+        '''
+        Get information gain for each available question
+        Return -1 for a question that is not available
+        '''
+        information_gain = np.array([])
+        num_characters = self.current_data.shape[0]
+        entropy = np.log2(num_characters)
+        for question_idx in self.questions_idxs:
+            question = self.current_data.columns[question_idx+1] # offset since first column is name
+            subset = self.current_data[question]
+            data_false = subset[subset<0.5].shape[0]
+            data_true = subset[subset>0.5].shape[0]
+            if data_true==num_characters or data_false==num_characters:
+                conditional_entropy = entropy
+            else:
+                conditional_entropy = (float(data_false)/num_characters)*np.log2(data_false) + (float(data_true)/num_characters)*np.log2(data_true)
+            information_gain = np.append(information_gain,entropy-conditional_entropy)
+            # pdb.set_trace()
+        return information_gain
+            
+    def rank_questions(self):
+        information_gain = self.get_information_gain()
+        sorted_questions = np.argsort(information_gain) # find indices to sort from smallest to greatest
+        sorted_questions = sorted_questions[::-1] # sort from greatest to least
+        return sorted_questions
+        # pdb.set_trace()
+
+    def choose_question(self):
+        '''
+        Chooses a question to ask human
+        Returns index of question to ask
+        Returns -1 if there is only one person left
+        '''
+        if self.current_data.shape[0]==1:
+            return -1
+        sorted_questions = self.rank_questions()
+        question_idx= sorted_questions[0]
+        return question_idx
+
+    def update_current_data(self,question_index,answer):
+        '''
+        Given question index and humans answer, update current data df and array of question idxs
+        '''
+        question = self.current_data.columns[self.questions_idxs[question_idx+1]]
+        subset = self.current_data[question]
+        # pdb.set_trace()
+        if answer<0.5:
+            self.current_data = self.current_data[subset<0.5]
+        else:
+            self.current_data = self.current_data[subset>0.5]
+        mask = np.ones(len(self.questions_idxs),dtype=bool)
+        mask[question_index] = False
+        self.questions_idxs = self.questions_idxs[mask]
+
 class Robot:
     IP = "192.168.86.55"
     PORT = 9559
