@@ -5,7 +5,8 @@ import sys
 import pdb
 import time
 
-class Robot():
+
+class Robot:
     IP = "192.168.86.55"
     PORT = 9559
     ACTIONS = ["Yes_1","Yes_2","Yes_3",
@@ -14,11 +15,13 @@ class Robot():
                 "IDontKnow_1","IDontKnow_2",
                 "No_3","No_8","No_9"]
     # QUESTIONS = ["Can your person fly?"]
+    # TODO populate the whole list of questions
     QUESTIONS = ["Does your person have a mask?",
-                "Is your person human?"]
+                 "Is your person human?"]
     roster = ["joker", "wonderWoman", "theFlash", "greenGoblin", "catwoman", "cyborg",
-          "theHulk", "captainAmerica", "wolverine", "superman", "ironMan", "aquaman", "mystique", "blackPanther",
-          "batman", "harleyQuinn", "spiderman", "thor", "storm"]
+              "theHulk", "captainAmerica", "wolverine", "superman", "ironMan", "aquaman", "mystique", "blackPanther",
+              "batman", "harleyQuinn", "spiderman", "thor", "storm"]
+
     def __init__(self):
         self.attendance = {}
         self.tts = ALProxy("ALTextToSpeech", self.IP, self.PORT)
@@ -26,7 +29,7 @@ class Robot():
         try:
             self.session.connect("tcp://" + self.IP + ":" + str(self.PORT))
         except RuntimeError:
-            print ("Can't connect to Naoqi at ip \"" + self.IP + "\" on port " + str(self.PORT) +".\n"
+            print ("Can't connect to Naoqi at ip \"" + self.IP + "\" on port " + str(self.PORT) + ".\n"
                    "Please check your script arguments. Run with -h option for help.")
             sys.exit(1)
         self.action_service = self.session.service("ALAnimationPlayer")
@@ -34,16 +37,15 @@ class Robot():
         # print(self.memory.getData("testKey"))
         self.check_attendance()
         pdb.set_trace()
-        
 
-    def speak(self,string):
+    def speak(self, string):
         self.tts.say(string)
 
-    def act(self,action):
-        '''
-        Action list:
-        yes, no, explain, you, warm
-        '''
+    def act(self, action):
+
+        # Action list:
+        # yes, no, explain, you, warm
+
         self.action_service.run("animations/Stand/Gestures/"+action, _async=True)
         # future.value()
         # self.action_service.run("animations/Stand/Gestures/"+action)
@@ -63,7 +65,7 @@ class Robot():
         self.speak("Would you like to play a game?")
         print("Would human like to start a game? (y/n):")
         answer = raw_input()
-        if answer=='y':
+        if answer == 'y':
             self.act("Enthusiastic_4")
             self.speak("Yay!")
             return 0
@@ -72,18 +74,18 @@ class Robot():
             self.act("BowShort_1")
             return 1
 
-    def ask_question(self,idx):
+    def ask_question(self, idx):
         self.act("IDontKnow_2")
         self.speak(self.QUESTIONS[idx])
         print("Human's answer to robot's question:")
         answer = raw_input()
-        if answer=='y':
+        if answer == 'y':
             self.act("Yes_1")
             self.speak("Hmmm, okay")
         else:
             self.act("No_1")
             self.speak("That's interesting")
-        if idx<len(self.QUESTIONS)-1:
+        if idx < len(self.QUESTIONS)-1:
             return 0
         else:
             return 1
@@ -96,7 +98,7 @@ class Robot():
     def answer_question(self):
         print("Robots answer to humans question(y/n):")
         answer = raw_input()
-        if answer=='y':
+        if answer == 'y':
             self.act("Yes_1")
             self.speak("Yes!")
             return 0
@@ -108,13 +110,14 @@ class Robot():
     def game(self):
         val = self.game_start()
         question_idx = 0
-        while val==0:
+        while val == 0:
             val = self.ask_question(question_idx)
-            question_idx+=1
+            question_idx += 1
             self.ask_to_answer()
             self.answer_question()
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     journey = Robot()
     # journey.speak("Hello everyone")
     # journey.act("Yes_1")
