@@ -98,7 +98,7 @@ class Robot:
                  "Is your person an X-man?"]
     roster = ["joker", "wonderWoman", "theFlash", "greenGoblin", "catwoman", "cyborg",
               "theHulk", "captainAmerica", "wolverine", "superman", "ironMan", "aquaman", "mystique", "blackPanther",
-              "batman", "harleyQuinn", "spiderman", "thor", "storm"]
+              "batman", "harleyQuinn", "spiderman", "thor", "storm", "blackWidow"]
 
     def __init__(self):
         self.qa = QuestionAnalyzer("../data/guesswho_superherodata1.csv")
