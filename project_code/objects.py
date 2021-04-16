@@ -21,10 +21,8 @@ class Robot:
 
     def __init__(self):
         self.attendance = {}
+        self.selected_characters = []
         self.head_pat = 0
-        for i in self.roster:
-            self.attendance[i] = 0
-
         self.tts = ALProxy("ALTextToSpeech", self.IP, self.PORT)
         self.session = qi.Session()
         try:
@@ -35,8 +33,8 @@ class Robot:
             sys.exit(1)
         self.action_service = self.session.service("ALAnimationPlayer")
         self.memory = self.session.service("ALMemory")
-        # print(self.memory.getData("testKey"))
-        self.check_attendance()
+        self.initialize_shared_memory()
+        # self.check_attendance()
         pdb.set_trace()
 
     def speak(self, string):
@@ -51,10 +49,17 @@ class Robot:
         # future.value()
         # self.action_service.run("animations/Stand/Gestures/"+action)
 
-    def initialize_sharedmemory(self):
+    # Returns list of selected characters
+    def get_selected_characters(self):
+        return self.selected_characters
+
+    # sets all values in the shared memory to zero, and sets all stored attendance values to zero.
+    # Also resets selected characters
+    def initialize_shared_memory(self):
         for i in self.roster:
             self.attendance[i] = 0
-            self.memory.insertData(self.memory.getData(i), 0)
+            self.memory.insertData(i, 0)
+        self.selected_characters = []
 
     def check_attendance(self):
         for r in self.roster:
@@ -123,6 +128,7 @@ class Robot:
             self.speak("The following characters have been selected:")
             for hero in self.attendance:
                 if self.attendance[hero] == 1:
+                    self.selected_characters.append(hero)
                     self.speak(hero)
 
         else:
