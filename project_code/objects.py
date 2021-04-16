@@ -105,6 +105,13 @@ class Robot:
             return 0
 
     def game(self):
+        if len(self.attendance) > 0:
+            self.speak("The following characters have been seen:")
+            for hero in self.attendance:
+                self.speak(hero)
+        else:
+            journey.speak("Nobody Loves Me, Frowny Face Emoji")
+
         val = self.game_start()
         question_idx = 0
         while val == 0:
