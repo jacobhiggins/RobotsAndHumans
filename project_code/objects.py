@@ -9,11 +9,8 @@ import time
 class Robot:
     IP = "192.168.86.55"
     PORT = 9559
-    ACTIONS = ["Yes_1","Yes_2","Yes_3",
-                "Please_1",
-                "Explain_1","Explain_2",
-                "IDontKnow_1","IDontKnow_2",
-                "No_3","No_8","No_9"]
+    ACTIONS = ["Yes_1", "Yes_2", "Yes_3", "Please_1", "Explain_1", "Explain_2", "IDontKnow_1", "IDontKnow_2",
+               "No_3", "No_8", "No_9"]
     # QUESTIONS = ["Can your person fly?"]
     # TODO populate the whole list of questions
     QUESTIONS = ["Does your person have a mask?",
