@@ -135,6 +135,7 @@ class Robot:
             self.speak("hmm")
             self.head_pat = self.memory.getData("headPat")
             # TODO add handling for if someone pats the head too early
+            # We'll see how this goes
 
         self.roll_call()
         question_idx = 0
