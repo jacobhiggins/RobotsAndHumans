@@ -21,6 +21,7 @@ class Robot:
 
     def __init__(self):
         self.attendance = {}
+        self.head_pat = 0
         for i in self.roster:
             self.attendance[i] = 0
 
@@ -73,6 +74,7 @@ class Robot:
         if answer == 'y':
             self.act("Enthusiastic_4")
             self.speak("Yay!")
+            self.speak("Please show me a set of characters that you would like to play with")
             return 0
         else:
             self.speak("Okay, maybe next time!")
@@ -112,23 +114,29 @@ class Robot:
             self.speak("Nope!")
             return 0
 
-    def game(self):
+    def roll_call(self):
         valid_set = 0
         for hero in self.attendance:
             if self.attendance[hero] == 1:
                 valid_set = 1
-
         if valid_set:
-            self.speak("The following characters have been seen:")
+            self.speak("The following characters have been selected:")
             for hero in self.attendance:
                 if self.attendance[hero] == 1:
+                    self.speak(hero)
                     # DEBUGGING
                     print(self.attendance[hero])
-                    self.speak(hero)
         else:
-            journey.speak("Nobody Loves Me, Frowny Face Emoji")
+            journey.speak("No Characters Have Been Selected.")
 
+    def game(self):
         val = self.game_start()
+        while self.head_pat != 1:
+            self.speak("hmm")
+            self.head_pat = self.memory.getData("headPat")
+            # TODO add handling for if someone pats the head too early
+
+        self.roll_call()
         question_idx = 0
         while val == 0:
             val = self.ask_question(question_idx)
