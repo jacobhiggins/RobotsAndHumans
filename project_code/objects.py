@@ -4,6 +4,8 @@ import argparse
 import sys
 import pdb
 import time
+import pandas as pd
+import numpy as np
 
 
 class QuestionAnalyzer():
@@ -12,12 +14,12 @@ class QuestionAnalyzer():
         self.current_data = pd.read_csv(filename, header=0)
         self.questions_idxs = np.arange(0,len(self.current_data.columns)-1) # list of questions not asked yet
 
-    def faces_in_play(self,list):
+    def faces_in_play(self,faces_list):
         '''
         Gets list of strings of faces that are in play
         Changes self.current_data to have only these faces
         '''
-        self.current_data = self.current_data[self.current_data['Name'].isin(faces)]
+        self.current_data = self.current_data[self.current_data['Name'].isin(faces_list)]
 
     def get_information_gain(self):
         '''
@@ -63,7 +65,7 @@ class QuestionAnalyzer():
         '''
         Given question index and humans answer, update current data df and array of question idxs
         '''
-        question = self.current_data.columns[self.questions_idxs[question_idx+1]]
+        question = self.current_data.columns[self.questions_idxs[question_index+1]]
         subset = self.current_data[question]
         # pdb.set_trace()
         if answer<0.5:
@@ -82,12 +84,24 @@ class Robot:
     # QUESTIONS = ["Can your person fly?"]
     # TODO populate the whole list of questions
     QUESTIONS = ["Does your person have a mask?",
-                 "Is your person human?"]
+                 "Is your person wearing a helmet?",
+                 "Does your person have hair that is visible?",
+                 "Is your person a male?",
+                 "Is your person a Marvel superhero?",
+                 "Is your person a DC superhero?",
+                 "Does your person have facial hair?",
+                 "Is your person a hero?",
+                 "Is your person a villian?",
+                 "Can your person fly?",
+                 "Is your person an Avenger?",
+                 "Is your person in the Justice League?",
+                 "Is your person an X-man?"]
     roster = ["joker", "wonderWoman", "theFlash", "greenGoblin", "catwoman", "cyborg",
               "theHulk", "captainAmerica", "wolverine", "superman", "ironMan", "aquaman", "mystique", "blackPanther",
               "batman", "harleyQuinn", "spiderman", "thor", "storm"]
 
     def __init__(self):
+        self.qa = QuestionAnalyzer("../data/guesswho_superherodata1.csv")
         self.attendance = {}
         self.selected_characters = []
         self.head_pat = 0
@@ -161,13 +175,12 @@ class Robot:
         if answer == 'y':
             self.act("Yes_1")
             self.speak("Hmmm, okay")
+            return 1
         else:
             self.act("No_1")
             self.speak("That's interesting")
-        if idx < len(self.QUESTIONS)-1:
             return 0
-        else:
-            return 1
+        
 
     def ask_to_answer(self):
         self.act("Explain_1")
@@ -217,10 +230,20 @@ class Robot:
     def game(self):
         val = self.game_start()
         self.observe_faces()
+        faces_list = self.get_selected_characters()
+        self.qa.faces_in_play(faces_list)
+        pdb.set_trace()
         question_idx = 0
-        while val == 0:
-            val = self.ask_question(question_idx)
-            question_idx += 1
+        while True:
+            question_idx = self.qa.choose_question()
+            if question_idx<0:
+                name = self.qa.current_data['Name'].tolist()
+                name = name[0]
+                self.speak("I figured out your person!")
+                self.speak("You are thinking of {}".format(name))
+                break
+            answer = self.ask_question(question_idx)
+            self.qa.update_current_data(question_idx,answer)
             self.ask_to_answer()
             self.answer_question()
 
