@@ -128,6 +128,7 @@ class Robot:
         else:
             self.speak("No Characters Have Been Selected.")
             self.speak("Please show me at least one character before patting my head again.")
+            self.head_pat = 0
             self.observe_faces()
 
     def observe_faces(self):
