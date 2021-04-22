@@ -27,6 +27,7 @@ class QuestionAnalyzer():
         Return -1 for a question that is not available
         '''
         information_gain = np.array([])
+        # pdb.set_trace()
         num_characters = self.current_data.shape[0]
         entropy = np.log2(num_characters)
         for question_idx in self.questions_idxs:
@@ -87,8 +88,8 @@ class Robot:
                  "Is your person wearing a helmet?",
                  "Does your person have hair that is visible?",
                  "Is your person a male?",
-                 "Is your person a Marvel superhero?",
-                 "Is your person a DC superhero?",
+                 "Is your person a Marvel character?",
+                 "Is your person a DC character?",
                  "Does your person have facial hair?",
                  "Is your person a hero?",
                  "Is your person a villian?",
@@ -101,7 +102,7 @@ class Robot:
               "batman", "harleyQuinn", "spiderman", "thor", "storm", "blackWidow"]
 
     def __init__(self):
-        self.qa = QuestionAnalyzer("../data/guesswho_superherodata1.csv")
+        self.qa = QuestionAnalyzer("../data/guesswho_superherodata2.csv")
         self.attendance = {}
         self.selected_characters = []
         self.head_pat = 0
@@ -230,8 +231,9 @@ class Robot:
 
     def game(self):
         val = self.game_start()
-        self.observe_faces()
-        faces_list = self.get_selected_characters()
+        # self.observe_faces() % Change back ********************
+        # faces_list = self.get_selected_characters()
+        faces_list = self.roster
         self.qa.faces_in_play(faces_list)
         pdb.set_trace()
         question_idx = 0
