@@ -45,10 +45,15 @@ class QuestionAnalyzer():
             
     def rank_questions(self):
         information_gain = self.get_information_gain()
-        sorted_questions = np.argsort(information_gain) # find indices to sort from smallest to greatest
-        sorted_questions = sorted_questions[::-1] # sort from greatest to least
-        return sorted_questions
         # pdb.set_trace()
+        sorted_questions_idxs = np.argsort(information_gain) # find indices to sort from smallest to greatest
+        sorted_questions_idxs = sorted_questions_idxs[::-1] # sort from greatest to least
+        sorted_questions = []
+        for idx in sorted_questions_idxs:
+            sorted_questions.append(self.questions_idxs[idx])
+        # pdb.set_trace()
+        return sorted_questions
+        
 
     def choose_question(self):
         '''
@@ -59,23 +64,30 @@ class QuestionAnalyzer():
         if self.current_data.shape[0]==1:
             return -1
         sorted_questions = self.rank_questions()
-        question_idx= sorted_questions[0]
+        # pdb.set_trace()
+        question_idx= sorted_questions[0] # Best questions
+        # question_idx=sorted_questions[1] # SEcond best question
         return question_idx
 
     def update_current_data(self,question_index,answer):
         '''
         Given question index and humans answer, update current data df and array of question idxs
         '''
-        question = self.current_data.columns[self.questions_idxs[question_index+1]]
+        question = self.current_data.columns[question_index+1]
         subset = self.current_data[question]
         # pdb.set_trace()
         if answer<0.5:
             self.current_data = self.current_data[subset<0.5]
         else:
             self.current_data = self.current_data[subset>0.5]
-        mask = np.ones(len(self.questions_idxs),dtype=bool)
-        mask[question_index] = False
-        self.questions_idxs = self.questions_idxs[mask]
+        # pdb.set_trace()
+        # mask = np.ones(len(self.questions_idxs),dtype=bool)
+        # mask[question_index] = False
+        self.questions_idxs = self.questions_idxs[np.invert(self.questions_idxs==question_index)]
+        # pdb.set_trace()
+        # self.questions_idxs = self.questions_idxs[mask]
+        # pdb.set_trace()
+        print(self.current_data)
 
 class Robot:
     IP = "192.168.86.55"
@@ -84,7 +96,7 @@ class Robot:
                "No_3", "No_8", "No_9"]
     # QUESTIONS = ["Can your person fly?"]
     # TODO populate the whole list of questions
-    QUESTIONS = ["Does your person have a mask?",
+    QUESTIONS = ["Does your person have a mask or is wearing a helmet?",
                  "Is your person wearing a helmet?",
                  "Does your person have hair that is visible?",
                  "Is your person a male?",
@@ -96,13 +108,16 @@ class Robot:
                  "Can your person fly?",
                  "Is your person an Avenger?",
                  "Is your person in the Justice League?",
-                 "Is your person an X-man?"]
+                 "Is your person an X-man?",
+                 "Does your person have their own stand alone movie?",
+                 "Is your person wearing red?",
+                 "Is your person considered royalty?"]
     roster = ["joker", "wonderWoman", "theFlash", "greenGoblin", "catwoman", "cyborg",
               "theHulk", "captainAmerica", "wolverine", "superman", "ironMan", "aquaman", "mystique", "blackPanther",
               "batman", "harleyQuinn", "spiderman", "thor", "storm", "blackWidow"]
 
     def __init__(self):
-        self.qa = QuestionAnalyzer("../data/guesswho_superherodata2.csv")
+        self.qa = QuestionAnalyzer("../data/guesswho_superherodata3.csv")
         self.attendance = {}
         self.selected_characters = []
         self.head_pat = 0
@@ -117,6 +132,7 @@ class Robot:
         self.action_service = self.session.service("ALAnimationPlayer")
         self.memory = self.session.service("ALMemory")
         self.initialize_shared_memory()
+        self.robot_won_game = False
         # self.check_attendance()
         # pdb.set_trace()
 
@@ -171,6 +187,7 @@ class Robot:
     def ask_question(self, idx):
         self.act("IDontKnow_2")
         self.speak(self.QUESTIONS[idx])
+        print("Question from robot: {}".format(self.QUESTIONS[idx]))
         print("Human's answer to robot's question:")
         answer = raw_input()
         if answer == 'y':
@@ -189,15 +206,24 @@ class Robot:
         self.speak("Now you ask me a question")
 
     def answer_question(self):
-        print("Robots answer to humans question(y/n):")
+        print("Robots answer to humans question(y/n/w):")
         answer = raw_input()
         if answer == 'y':
             self.act("Yes_1")
             self.speak("Yes!")
             return 0
+        elif answer == 'w':
+            self.act("Yes_1")
+            self.speak("Yes! You guess my person! You win. You are a superstar.")
+            return 1
         else:
             self.act("No_1")
-            self.speak("Nope!")
+            if np.random.random()>0.20:
+                self.speak("Nope!")
+            else:
+                self.speak("Yeh")
+                time.sleep(0.5)
+                self.speak("Actually, no. Sike! You are such a loser!")
             return 0
 
     def roll_call(self):
@@ -229,27 +255,42 @@ class Robot:
             self.head_pat = self.memory.getData("headPat")
         self.roll_call()
 
+    def start_game(self):
+        self.act("Explain_1")
+        self.speak("We are going to start the game now. Because I'm so nice, I'll let you start.")
+
     def game(self):
         val = self.game_start()
-        # self.observe_faces() % Change back ********************
+        # self.observe_faces()
         # faces_list = self.get_selected_characters()
         faces_list = self.roster
         self.qa.faces_in_play(faces_list)
         pdb.set_trace()
         question_idx = 0
+        self.start_game()
         while True:
+            self.ask_to_answer()
+            human_guessed_person = self.answer_question()
             question_idx = self.qa.choose_question()
             if question_idx<0:
                 name = self.qa.current_data['Name'].tolist()
                 name = name[0]
                 self.speak("I figured out your person!")
                 self.speak("You are thinking of {}".format(name))
+                self.robot_won_game = True
                 break
             answer = self.ask_question(question_idx)
             self.qa.update_current_data(question_idx,answer)
-            self.ask_to_answer()
-            self.answer_question()
-
+            
+            if human_guessed_person:
+                break
+        if self.robot_won_game==True:
+            self.speak("Good game! Come play again.")
+            self.act("Enthusiastic_5")
+        else:
+            self.speak("You beat me! Good job!")
+            self.act("BowShort_1")
+            self.speak("I am now yours to command.")
 
 if __name__ == '__main__':
     journey = Robot()
