@@ -1,4 +1,5 @@
-The ./data contains the data features used by the robot to calculate the optimal question to ask the human oponent.
+The ./data contains the data features used by the robot to calculate the optimal question to ask the human opponent.
+The ./data/guesswho_superherodata3.csv is used for the final game code.
 
 The ./project_code/objects.py file is the main python script used for playing the game. When run, the game commences.
 
